@@ -14,7 +14,7 @@ public class InterfazNotificacionPush implements IObservadorNovedad {
             StringBuilder mensaje = new StringBuilder()
                     .append("Hola ")
                     .append(suscriptor)
-                    .append(",\n\nSe encuentran nuevas actualizaciones de los siguientes vinos:\n");
+                    .append(",\nSe encuentran nuevas actualizaciones de los siguientes vinos:\n");
             for (DTOVino vino : novedadesVino) {
                 mensaje.append("- ").append(vino.toString()).append("\n");
             }

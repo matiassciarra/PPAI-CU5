@@ -1,5 +1,10 @@
 package ppai.cu5.importarActualizacionesBodega.boundary;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
 import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
 import ppai.cu5.importarActualizacionesBodega.gestor.GestorActualizacion;
 
@@ -7,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@RestController
+@RequestMapping("/actualizacion")
 public class PantallaNovedades {
 
     GestorActualizacion gestor;
@@ -16,31 +23,29 @@ public class PantallaNovedades {
         gestor.setPantalla(this);
     }
 
-    public void opcImportarActualizaciones() {
-        this.habilitarVentana();
+    @GetMapping("/bodegas")
+    public List<DTOBodega> opcImportarActualizaciones() {
+        List<DTOBodega> res = this.habilitarVentana();
+        return res;
     }
 
-    private void habilitarVentana() {
-        gestor.opcImportarActualizaciones();
+    private List<DTOBodega> habilitarVentana() {
+        return gestor.opcImportarActualizaciones();
     }
 
-    public void solicitarSeleccionBodega(List<Bodega> bodegasActualizables) {
+
+    /*TODO: aplicando este MVC, no es necesario este metodo
+    public void solicitarSeleccionBodega(List<DTOBodegaBodega> bodegasActualizables) {
         //Este metodo tenemos que reescribir, que seria el GetMapping.
         System.out.println("Lista de bodegas actualizables: ");
         bodegasActualizables.forEach(bodega -> System.out.println(bodega.getId() + " - " + bodega.getNombre()));
     }
-
-    public void tomarSeleccionBodega() {
+    */
+    @PostMapping("/bodegas")
+    //Este seria un POST donde se envian las bodegas seleccionadas.
+    public void tomarSeleccionBodega(@RequestBody List<Long> idBodegasSeleccionada) {
         //Este metodo seria el encargado de tomar la seleccion de las bodegas, que seria un metodo POST, osea del cuerpo del POST tendrian que llegar los IDs de las bodegas a actualizar.
-        List<Long> idBodegasSeleccionadas = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Ingrese los IDs de las bodegas a actualizar, separados por comas:");
-        String input = scanner.nextLine();
-        String[] ids = input.split(",");
-        for (String id : ids) {
-            idBodegasSeleccionadas.add(Long.parseLong(id.trim()));
-        }
-        gestor.tomarSeleccionBodega(idBodegasSeleccionadas);
+        gestor.tomarSeleccionBodega(idBodegasSeleccionada);
     }
 
 }

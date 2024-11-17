@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.cglib.core.Local;
 
+import jakarta.persistence.*;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +17,27 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Entity
+@Table
 public class Bodega {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String descripcion;
 
+    @Column(name = "fecha_ultima_actualizacion")
     private LocalDate fechaUltimaActualizacion;
 
     private String nombre;
 
+    @Column(name = "periodo_actualizacion")
     private int periodoActualizacion; //numero de meses la cual la bodega se actualiza
+
+    @OneToMany(mappedBy = "bodega", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Vino> vinos;
+
 
     public Bodega(Long id, String descripcion, LocalDate fechaUltimaActualizacion, String nombre, int periodoActualizacion) {
         this.id = id;
@@ -33,16 +45,15 @@ public class Bodega {
         this.fechaUltimaActualizacion = fechaUltimaActualizacion;
         this.nombre = nombre;
         this.periodoActualizacion = periodoActualizacion;
-        this.vinos = new ArrayList<>();
     }
-
-    private List<Vino> vinos;
 
     public boolean sosActualizable() {
         return validarPeriocidad();
     }
 
     private boolean validarPeriocidad() {
+        //TODO
+        //Se debe enviar la fecha actual por parametro
         LocalDate fechaActual = LocalDate.now();
         LocalDate fechaAActualizar = fechaUltimaActualizacion.plusMonths(periodoActualizacion); //Plus Months suma meses
         return fechaActual.isAfter(fechaAActualizar) || fechaActual.isEqual(fechaAActualizar);

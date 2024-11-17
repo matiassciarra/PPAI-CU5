@@ -1,5 +1,7 @@
 package ppai.cu5.importarActualizacionesBodega.boundary;
 
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
@@ -8,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class ConfigAPI {
 
     public List<String> obtenerActualizacionesVinos(String idBodega) {

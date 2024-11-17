@@ -1,16 +1,22 @@
 package ppai.cu5.importarActualizacionesBodega;
 
 import ppai.cu5.importarActualizacionesBodega.gestor.GestorActualizacion;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import ppai.cu5.importarActualizacionesBodega.boundary.PantallaNovedades;
 
-//@SpringBootApplication
+@SpringBootApplication
 public class ImportarActualizacionesBodegaApplication {
 	public static void main(String[] args) {
-		//SpringApplication.run(ImportarActualizacionesBodegaApplication.class, args);
 		GestorActualizacion gestor = new GestorActualizacion();
 		PantallaNovedades pantalla = new PantallaNovedades(gestor);
-		pantalla.opcImportarActualizaciones();
-		pantalla.tomarSeleccionBodega();
+		SpringApplication.run(ImportarActualizacionesBodegaApplication.class, args);
+
+		//pantalla.opcImportarActualizaciones();
+		//pantalla.tomarSeleccionBodega();
+
 	}
 
 }

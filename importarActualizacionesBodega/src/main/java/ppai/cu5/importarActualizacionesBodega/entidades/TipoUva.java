@@ -17,7 +17,7 @@ public class TipoUva {
     private Long id;
     private String descripcion;
     private String nombre;
-    @OneToMany(mappedBy="tipoUva", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="tipoUva", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Varietal> varietal;
 
     public TipoUva(Long id,String descripcion, String nombre) {

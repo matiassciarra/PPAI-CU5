@@ -22,7 +22,7 @@ public class Varietal {
     @JoinColumn(name="tipo_uva_id")
     private TipoUva tipoUva;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "vino_id")
     private Vino vino;
 

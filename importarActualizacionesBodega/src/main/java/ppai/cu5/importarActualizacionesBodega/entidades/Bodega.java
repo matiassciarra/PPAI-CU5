@@ -8,6 +8,7 @@ import org.springframework.cglib.core.Local;
 
 import jakarta.persistence.*;
 import org.springframework.stereotype.Service;
+import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -72,14 +73,16 @@ public class Bodega {
         return false;
     }
 
-    public void actualizarVino(int añada, String nombre, double precioNuevo, String notaCataNueva) {
+    public Vino actualizarVino(int añada, String nombre, double precioNuevo, String notaCataNueva) {
         for (Vino vinoBodega : vinos) {
             if (Objects.equals(vinoBodega.getAñada(), añada) || Objects.equals(vinoBodega.getNombre(), nombre)) {
                 vinoBodega.setPrecioARS(precioNuevo);
                 vinoBodega.setNotaDeCataBodega(notaCataNueva);
                 vinoBodega.setFechaActualizacion(LocalDate.now());
+                return vinoBodega;
             }
         }
+        return null;
     }
 
     public void agregarVino(Vino vino) {

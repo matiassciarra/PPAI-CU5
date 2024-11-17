@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
+import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
 import ppai.cu5.importarActualizacionesBodega.boundary.ConfigAPI;
 import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
 import ppai.cu5.importarActualizacionesBodega.entidades.Maridaje;
@@ -59,26 +60,25 @@ public class GestorActualizacion {
 
     }
 
-    public void tomarSeleccionBodega(List<Long> idsSeleccionadosBodega) {
+    public List<DTOVino>  tomarSeleccionBodega(List<Long> idsSeleccionadosBodega) {
         //Se obtienen las bodegas seleccionadas para actualizar
         bodegasSeleccionadas = bodegas.stream().filter(bodega -> idsSeleccionadosBodega.contains(bodega.getId())).toList();
-        obtenerActualizaciones(idsSeleccionadosBodega);
+        return obtenerActualizaciones(idsSeleccionadosBodega);
     }
 
-    public void obtenerActualizaciones(List<Long> idsSeleccionadosBodega) {
+    public List<DTOVino> obtenerActualizaciones(List<Long> idsSeleccionadosBodega) {
 
         List<String> actualizacionesVinos = new ArrayList<>(List.of());
 
         for (Long idBodega : idsSeleccionadosBodega) {
             actualizacionesVinos.addAll(configAPI.obtenerActualizacionesVinos(String.valueOf(idBodega)));
         }
-        actualizarVinosBodega(actualizacionesVinos);
-        actualizacionesVinos.forEach(System.out::println);
+        return actualizarVinosBodega(actualizacionesVinos);
     }
 
-    private void actualizarVinosBodega(List<String> actualizacionesVinos) {
+    private List<DTOVino>  actualizarVinosBodega(List<String> actualizacionesVinos) {
         obtenerFechaActual();
-        
+        List<DTOVino> listaVinos = new ArrayList();
         for (String vinoTraido : actualizacionesVinos) {
             String[] camposVinoTraido = vinoTraido.split(";");
             List<Vino> resumenVinosActualizados = new ArrayList();
@@ -93,18 +93,21 @@ public class GestorActualizacion {
             //Ahora recorro las bodegas seleccionadas para actualizarle los vinos o agreguen nuevos.
             for (Bodega bodegaSeleccionada : bodegasSeleccionadas) {
                 if (bodegaSeleccionada.existeVino(añada, nombre, idBodegaVinoTraido)) {
-                    bodegaSeleccionada.actualizarVino(añada, nombre, precio, notaCata);
+                    Vino vinoActualizado = bodegaSeleccionada.actualizarVino(añada, nombre, precio, notaCata);
+                    listaVinos.add(new DTOVino(vinoActualizado,false));
                 }
                 else {
                     List<Maridaje> maridajes = buscarMaridajes(camposVinoTraido[6]);
                     List<TipoUva> tiposUva = buscarTiposUva(camposVinoTraido[5]);
                     Vino vinoCreado = new Vino(añada, nombre, notaCata, precio, fechaActual, tiposUva, infoVarietales, maridajes,bodegaSeleccionada);
                     bodegaSeleccionada.getVinos().add(vinoCreado);
+                    listaVinos.add(new DTOVino(vinoCreado,true));
                 }
             }
         }
         setearFechaUltimaActualizacionABodegas(fechaActual);
         servicioBodega.guardarBodegas(bodegasSeleccionadas);
+        return listaVinos;
     }
     private List<Maridaje> buscarMaridajes(String maridajesString) {
         List<Maridaje> maridajesEncontrados = new ArrayList<>();

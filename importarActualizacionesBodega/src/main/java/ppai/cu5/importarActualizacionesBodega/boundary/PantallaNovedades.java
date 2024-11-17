@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
+import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
 import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
 import ppai.cu5.importarActualizacionesBodega.gestor.GestorActualizacion;
 
@@ -43,9 +44,9 @@ public class PantallaNovedades {
     */
     @PostMapping("/bodegas")
     //Este seria un POST donde se envian las bodegas seleccionadas.
-    public void tomarSeleccionBodega(@RequestBody List<Long> idBodegasSeleccionada) {
+    public List<DTOVino> tomarSeleccionBodega(@RequestBody List<Long> idBodegasSeleccionada) {
         //Este metodo seria el encargado de tomar la seleccion de las bodegas, que seria un metodo POST, osea del cuerpo del POST tendrian que llegar los IDs de las bodegas a actualizar.
-        gestor.tomarSeleccionBodega(idBodegasSeleccionada);
+        return gestor.tomarSeleccionBodega(idBodegasSeleccionada);
     }
 
 }

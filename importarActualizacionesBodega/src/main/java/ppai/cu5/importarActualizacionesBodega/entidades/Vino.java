@@ -31,7 +31,7 @@ public class Vino {
     @JoinColumn(name="id_bodega")
     private Bodega bodega;
 
-    @OneToMany(mappedBy = "vino", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vino", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Varietal> varietales;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -63,7 +63,10 @@ public class Vino {
                 TipoUva tipoUva = tiposUvas.stream().filter(t -> t.getId() == idTipoUva).findFirst().orElse(null);
                 String descripcion = camposVarietal[1];
                 int porcentajeComposicion = Integer.parseInt(camposVarietal[2]);
-                varietalesCreados.add(new Varietal(descripcion, porcentajeComposicion, tipoUva));
+                Varietal varietal = new Varietal(descripcion, porcentajeComposicion, tipoUva);
+                //Este cambio de mierda teniamos que hacer para que solucione la base de datos diossss
+                varietal.setVino(this); // Establece la relación bidireccional
+                varietalesCreados.add(varietal);
             }
             return varietalesCreados;
         }

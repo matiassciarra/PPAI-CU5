@@ -94,6 +94,27 @@ public class Bodega {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Bodega bodega = (Bodega) o;
+
+        // Si ambos tienen ID, comparar por ID
+        if (id != null && bodega.getId() != null) {
+            return id.equals(bodega.getId());
+        }
+
+        // Si no tienen ID, comparar por nombre
+        return nombre != null && nombre.equals(bodega.getNombre());
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : (nombre != null ? nombre.hashCode() : 0);
+    }
+
+    @Override
     public String toString() {
         return String.format("Bodega{nombre='%s', cantidadVinos=%d}",
                 nombre,

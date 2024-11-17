@@ -33,6 +33,8 @@ public class Siguiendo {
 
     public Boolean sosDeBodega(List<Bodega> seleccionBodega) {
         for (Bodega bodega : seleccionBodega) {
+            System.out.println(bodega  );
+            System.out.println(seleccionBodega);
             if (this.bodega.equals(bodega)) {
                 return true;
             }

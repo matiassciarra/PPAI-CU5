@@ -5,23 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
+import ppai.cu5.importarActualizacionesBodega.Observer.IObservadorNovedad;
+import ppai.cu5.importarActualizacionesBodega.Observer.ISujeto;
 import ppai.cu5.importarActualizacionesBodega.boundary.ConfigAPI;
-import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
-import ppai.cu5.importarActualizacionesBodega.entidades.Maridaje;
-import ppai.cu5.importarActualizacionesBodega.entidades.TipoUva;
+import ppai.cu5.importarActualizacionesBodega.boundary.InterfazNotificacionPush;
+import ppai.cu5.importarActualizacionesBodega.entidades.*;
 
 import ppai.cu5.importarActualizacionesBodega.servicios.BodegaService;
+import ppai.cu5.importarActualizacionesBodega.servicios.EnofiloService;
 import ppai.cu5.importarActualizacionesBodega.servicios.MaridajeService;
 import ppai.cu5.importarActualizacionesBodega.servicios.TipoUvaService;
 import ppai.cu5.importarActualizacionesBodega.boundary.PantallaNovedades;
-import ppai.cu5.importarActualizacionesBodega.entidades.Vino;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GestorActualizacion {
+public class GestorActualizacion implements ISujeto {
 
     @Autowired
     private BodegaService servicioBodega;
@@ -29,6 +30,8 @@ public class GestorActualizacion {
     private MaridajeService servicioMaridaje;
     @Autowired
     private TipoUvaService tipoUvaService;
+    @Autowired
+    private EnofiloService enofiloService;
     @Autowired
     private ConfigAPI configAPI;
 
@@ -40,12 +43,16 @@ public class GestorActualizacion {
     private List<Bodega> bodegasActualizables;
     private List<Bodega> bodegasSeleccionadas;
     private LocalDate fechaActual;
+    private List<Enofilo> enofilos;
+    private List<IObservadorNovedad> observadores;
 
     @PostConstruct
     private void inicializardatos(){
         bodegas = servicioBodega.obtenerTodasLasBodegas();
         tiposUvas = tipoUvaService.obtenerTiposUva();
         maridajes = servicioMaridaje.obtenerTodosLosMaridajes();
+        enofilos = enofiloService.obtenerTodosLosEnofilos();
+        observadores = new ArrayList<>();
     }
 
     public List<DTOBodega> opcImportarActualizaciones() {
@@ -107,6 +114,7 @@ public class GestorActualizacion {
         }
         setearFechaUltimaActualizacionABodegas(fechaActual);
         servicioBodega.guardarBodegas(bodegasSeleccionadas);
+        notificarUsuarioSeguidores(listaVinos);
         return listaVinos;
     }
     private List<Maridaje> buscarMaridajes(String maridajesString) {
@@ -149,5 +157,49 @@ public class GestorActualizacion {
     public void setPantalla(PantallaNovedades pantalla) {
         this.pantalla = pantalla;
     }
-    
+
+
+
+    private void notificarUsuarioSeguidores (List<DTOVino> novedadesVino){
+        List<String> usuariosSeguidores = buscarSeguidoresBodega();
+        IObservadorNovedad observadorNovedad = new InterfazNotificacionPush();
+        suscribir(observadorNovedad);
+        notificar(novedadesVino, usuariosSeguidores);
+    }
+
+
+
+    private List<String> buscarSeguidoresBodega (){
+        List<String> usuariosSeguidores = new ArrayList<>();
+        System.out.println("motrar bodegas seleccionada" + bodegasSeleccionadas);
+        for (var e : this.enofilos) {
+            if (e.seguisABodega(bodegasSeleccionadas)) {
+                usuariosSeguidores.add(e.getUsuario().getNombre());
+            }
+        }
+        System.out.println(usuariosSeguidores);
+        return usuariosSeguidores;
+    }
+
+    @Override
+    public void notificar(List<DTOVino> novedadesVino,List<String> usuariosSeguidores) {
+        observadores.forEach(observadorNovedad -> {
+            //System.out.println("EstoAnda y "+usuariosSeguidores);
+            observadorNovedad.enviarNotificacion(novedadesVino,usuariosSeguidores);
+        });
+    }
+
+    @Override
+    public void quitar(IObservadorNovedad observador) {
+        this.observadores.remove(observador);
+    }
+
+
+    @Override
+    public void suscribir(IObservadorNovedad observador) {
+        this.observadores.add(observador);
+    }
+
+
+
 }

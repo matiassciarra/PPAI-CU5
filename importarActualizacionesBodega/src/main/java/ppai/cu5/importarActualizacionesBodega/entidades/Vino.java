@@ -70,4 +70,12 @@ public class Vino {
             }
             return varietalesCreados;
         }
+
+    @Override
+    public String toString() {
+        return String.format("Vino{nombre='%s', bodegaId=%d}",
+                nombre,
+                bodega != null ? bodega.getId() : null
+        );
+    }
 }

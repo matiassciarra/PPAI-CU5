@@ -39,7 +39,6 @@ public class Bodega {
     @OneToMany(mappedBy = "bodega", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Vino> vinos;
 
-
     public Bodega(Long id, String descripcion, LocalDate fechaUltimaActualizacion, String nombre, int periodoActualizacion) {
         this.id = id;
         this.descripcion = descripcion;
@@ -92,6 +91,14 @@ public class Bodega {
     public void mostrarVinos() {
         System.out.println("vinos de la bodega: " + nombre);
         vinos.forEach(System.out::println);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Bodega{nombre='%s', cantidadVinos=%d}",
+                nombre,
+                vinos != null ? vinos.size() : 0
+        );
     }
 
 }

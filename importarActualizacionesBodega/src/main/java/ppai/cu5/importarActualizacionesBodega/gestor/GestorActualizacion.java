@@ -3,16 +3,15 @@ package ppai.cu5.importarActualizacionesBodega.gestor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import ppai.cu5.importarActualizacionesBodega.Observer.IObservadorNovedad;
+import ppai.cu5.importarActualizacionesBodega.Observer.ISujeto;
 import ppai.cu5.importarActualizacionesBodega.boundary.ConfigAPI;
-import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
-import ppai.cu5.importarActualizacionesBodega.entidades.Maridaje;
-import ppai.cu5.importarActualizacionesBodega.entidades.TipoUva;
-import ppai.cu5.importarActualizacionesBodega.entidades.Varietal;
+import ppai.cu5.importarActualizacionesBodega.boundary.InterfazNotificacionPush;
+import ppai.cu5.importarActualizacionesBodega.entidades.*;
 import ppai.cu5.importarActualizacionesBodega.servicios.BodegaService;
 import ppai.cu5.importarActualizacionesBodega.servicios.MaridajeService;
 import ppai.cu5.importarActualizacionesBodega.servicios.TipoUvaService;
 import ppai.cu5.importarActualizacionesBodega.boundary.PantallaNovedades;
-import ppai.cu5.importarActualizacionesBodega.entidades.Vino;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class GestorActualizacion {
+public class GestorActualizacion implements ISujeto {
 
     private BodegaService servicioBodega;
     private MaridajeService servicioMaridaje;
@@ -34,6 +33,9 @@ public class GestorActualizacion {
     private List<Bodega> bodegasActualizables;
     private List<Bodega> bodegasSeleccionadas;
     private LocalDate fechaActual;
+    private List<Enofilo> enofilos;
+    private List<IObservadorNovedad> observadores;
+
 
     public GestorActualizacion() {
         servicioBodega = new BodegaService();
@@ -99,6 +101,7 @@ public class GestorActualizacion {
             }
         }
         setearFechaUltimaActualizacionABodegas(fechaActual);
+        notificarUsuarioSeguidores ();
 
     }
     private List<Maridaje> buscarMaridajes(String maridajesString) {
@@ -136,5 +139,42 @@ public class GestorActualizacion {
 
     private LocalDate obtenerFechaActual() {
         return LocalDate.now();
+    }
+
+
+    private void notificarUsuarioSeguidores (){
+        List<String> usuariosSeguidores = buscarSeguidoresBodega();
+        IObservadorNovedad observadorNovedad = new InterfazNotificacionPush();
+        suscribir(observadorNovedad);
+        notificar(usuariosSeguidores);
+    }
+
+
+
+    private List<String> buscarSeguidoresBodega (){
+        List<String> usuariosSeguidores = new ArrayList<>();
+        for (var e : this.enofilos) {
+            if (e.seguisABodega(bodegasSeleccionadas)) {
+                usuariosSeguidores.add(e.getUsuario().getNombre());
+            }
+        }
+        return usuariosSeguidores;
+    }
+
+    @Override
+    public void notificar(List<String> usuariosSeguidores) {
+        observadores.forEach(observadorNovedad -> {
+            observadorNovedad.enviarNotificacion("Se encuentra Actulizacion",usuariosSeguidores);
+        });
+    }
+
+    @Override
+    public void quitar(IObservadorNovedad observador) {
+
+    }
+
+    @Override
+    public void suscribir(IObservadorNovedad observador) {
+        this.observadores.add(observador);
     }
 }

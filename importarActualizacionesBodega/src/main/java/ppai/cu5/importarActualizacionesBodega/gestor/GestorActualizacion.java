@@ -1,6 +1,7 @@
 package ppai.cu5.importarActualizacionesBodega.gestor;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
@@ -35,6 +36,7 @@ public class GestorActualizacion implements ISujeto {
     @Autowired
     private ConfigAPI configAPI;
 
+    @Setter
     private PantallaNovedades pantalla;
 
     private List<Bodega> bodegas;
@@ -88,8 +90,6 @@ public class GestorActualizacion implements ISujeto {
         List<DTOVino> listaVinos = new ArrayList();
         for (String vinoTraido : actualizacionesVinos) {
             String[] camposVinoTraido = vinoTraido.split(";");
-            List<Vino> resumenVinosActualizados = new ArrayList();
-
             //Extraigo los datos de los vinos
             int añada = Integer.parseInt(camposVinoTraido[0]);
             String nombre = camposVinoTraido[1];
@@ -99,7 +99,11 @@ public class GestorActualizacion implements ISujeto {
             String infoVarietales = camposVinoTraido[5];
             //Ahora recorro las bodegas seleccionadas para actualizarle los vinos o agreguen nuevos.
             for (Bodega bodegaSeleccionada : bodegasSeleccionadas) {
-                if (bodegaSeleccionada.existeVino(añada, nombre, idBodegaVinoTraido)) {
+                //Este condicional verifica que el vino traido de la api corresponda a la bodega seleccionada actual
+                if (!idBodegaVinoTraido.equals(bodegaSeleccionada.getId())) {
+                    break;
+                }
+                if (bodegaSeleccionada.existeVino(añada, nombre)) {
                     Vino vinoActualizado = bodegaSeleccionada.actualizarVino(añada, nombre, precio, notaCata);
                     listaVinos.add(new DTOVino(vinoActualizado,false));
                 }
@@ -107,7 +111,7 @@ public class GestorActualizacion implements ISujeto {
                     List<Maridaje> maridajes = buscarMaridajes(camposVinoTraido[6]);
                     List<TipoUva> tiposUva = buscarTiposUva(camposVinoTraido[5]);
                     Vino vinoCreado = new Vino(añada, nombre, notaCata, precio, fechaActual, tiposUva, infoVarietales, maridajes,bodegaSeleccionada);
-                    bodegaSeleccionada.agregarVinoSiNoExiste(vinoCreado);
+                    bodegaSeleccionada.getVinos().add(vinoCreado);
                     listaVinos.add(new DTOVino(vinoCreado,true));
                 }
             }
@@ -154,11 +158,6 @@ public class GestorActualizacion implements ISujeto {
         fechaActual = LocalDate.now();
     }
 
-    public void setPantalla(PantallaNovedades pantalla) {
-        this.pantalla = pantalla;
-    }
-
-
     private void notificarUsuarioSeguidores (List<DTOVino> novedadesVino){
         List<String> usuariosSeguidores = buscarSeguidoresBodega();
         IObservadorNovedad observadorNovedad = new InterfazNotificacionPush();
@@ -166,17 +165,13 @@ public class GestorActualizacion implements ISujeto {
         notificar(novedadesVino, usuariosSeguidores);
     }
 
-
-
     private List<String> buscarSeguidoresBodega (){
         List<String> usuariosSeguidores = new ArrayList<>();
-        System.out.println("motrar bodegas seleccionada" + bodegasSeleccionadas);
-        for (var e : this.enofilos) {
-            if (e.seguisABodega(bodegasSeleccionadas)) {
-                usuariosSeguidores.add(e.getUsuario().getNombre());
+        for (Enofilo enofilo : this.enofilos) {
+            if (enofilo.seguisABodega(bodegasSeleccionadas)) {
+                usuariosSeguidores.add(enofilo.getUsuario().getNombre());
             }
         }
-        System.out.println(usuariosSeguidores);
         return usuariosSeguidores;
     }
 
@@ -192,12 +187,9 @@ public class GestorActualizacion implements ISujeto {
         this.observadores.remove(observador);
     }
 
-
     @Override
     public void suscribir(IObservadorNovedad observador) {
         this.observadores.add(observador);
     }
-
-
 
 }

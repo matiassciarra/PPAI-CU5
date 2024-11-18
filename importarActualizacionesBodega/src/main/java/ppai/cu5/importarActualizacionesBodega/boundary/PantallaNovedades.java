@@ -1,5 +1,7 @@
 package ppai.cu5.importarActualizacionesBodega.boundary;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
@@ -18,9 +20,12 @@ public class PantallaNovedades {
     }
 
     @GetMapping("/bodegas")
-    public List<DTOBodega> opcImportarActualizaciones() {
+    public ResponseEntity<?> opcImportarActualizaciones() {
         List<DTOBodega> res = this.habilitarVentana();
-        return res;
+        if (res.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No existen bodegas actualizables aún");
+        }
+        return ResponseEntity.ok(res);
     }
 
     private List<DTOBodega> habilitarVentana() {

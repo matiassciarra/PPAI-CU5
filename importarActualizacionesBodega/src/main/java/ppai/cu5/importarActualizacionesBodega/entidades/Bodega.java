@@ -59,14 +59,9 @@ public class Bodega {
         return fechaActual.isAfter(fechaAActualizar) || fechaActual.isEqual(fechaAActualizar);
     }
 
-    public void obtenerActualizacion() {
-
-    }
-
-    public boolean existeVino(int añada, String nombre, Long idBodegaVinoTraido) {
-        
+    public boolean existeVino(int añada, String nombre) {
         for (Vino vinoBodega : vinos) {
-           if (Objects.equals(vinoBodega.getAñada(), añada) && vinoBodega.getNombre().equals(nombre) && Objects.equals(id, idBodegaVinoTraido))
+           if (Objects.equals(vinoBodega.getAñada(), añada) && vinoBodega.getNombre().equals(nombre))
             return true;
         }
         return false;

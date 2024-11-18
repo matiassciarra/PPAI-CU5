@@ -183,7 +183,6 @@ public class GestorActualizacion implements ISujeto {
     @Override
     public void notificar(List<DTOVino> novedadesVino,List<String> usuariosSeguidores) {
         observadores.forEach(observadorNovedad -> {
-            //System.out.println("EstoAnda y "+usuariosSeguidores);
             observadorNovedad.enviarNotificacion(novedadesVino,usuariosSeguidores);
         });
     }

@@ -18,7 +18,7 @@ public class Maridaje {
     private String descripcion;
     private String nombre;
 
-    @ManyToMany(mappedBy="maridajes", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy="maridajes", fetch = FetchType.LAZY)
     private List<Vino> vino;
 
     public Maridaje(Long id, String descripcion, String nombre) {

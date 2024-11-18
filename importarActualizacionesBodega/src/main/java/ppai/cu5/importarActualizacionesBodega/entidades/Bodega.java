@@ -36,7 +36,7 @@ public class Bodega {
     @Column(name = "periodo_actualizacion")
     private int periodoActualizacion; //numero de meses la cual la bodega se actualiza
 
-    @OneToMany(mappedBy = "bodega", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bodega", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Vino> vinos;
 
     public Bodega(Long id, String descripcion, LocalDate fechaUltimaActualizacion, String nombre, int periodoActualizacion) {
@@ -74,7 +74,7 @@ public class Bodega {
 
     public Vino actualizarVino(int añada, String nombre, double precioNuevo, String notaCataNueva) {
         for (Vino vinoBodega : vinos) {
-            if (Objects.equals(vinoBodega.getAñada(), añada) || Objects.equals(vinoBodega.getNombre(), nombre)) {
+            if (vinoBodega.getAñada() == añada && Objects.equals(vinoBodega.getNombre(), nombre)) {
                 vinoBodega.setPrecioARS(precioNuevo);
                 vinoBodega.setNotaDeCataBodega(notaCataNueva);
                 vinoBodega.setFechaActualizacion(LocalDate.now());

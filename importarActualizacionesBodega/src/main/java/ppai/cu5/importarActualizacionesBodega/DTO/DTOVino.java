@@ -13,21 +13,23 @@ import java.util.List;
 @NoArgsConstructor
 public class DTOVino {
     private String nombreBodega;
+    private String nombre;
     private int añada;
     private String notaDeCataBodega;
     private double precio;
     private LocalDate fechaActualizacion;
     private List<DTOVarietal> varietales;
     //todo-> 0 actualizado || 1 creado
-    private boolean accion;
+    private boolean creado;
 
     public DTOVino(Vino vino, boolean accion) {
-        this.nombreBodega = vino.getBodega().getNombre();
+        this.nombre = vino.getNombre();
         this.añada = vino.getAñada();
+        this.nombreBodega = vino.getBodega().getNombre();
         this.notaDeCataBodega = vino.getNotaDeCataBodega();
         this.precio = vino.getPrecioARS();
         this.fechaActualizacion = vino.getFechaActualizacion();
         this.varietales = vino.getVarietales().stream().map(DTOVarietal::new).toList();
-        this.accion = accion;
+        this.creado = accion;
     }
 }

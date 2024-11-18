@@ -34,11 +34,11 @@ public class Vino {
     @OneToMany(mappedBy = "vino", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Varietal> varietales;
     
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
         name="maridajesXvinos",
-        joinColumns = @JoinColumn(name = "maridaje_id"),
-        inverseJoinColumns = @JoinColumn(name = "vino_id")
+        joinColumns = @JoinColumn(name = "vino_id"),
+        inverseJoinColumns = @JoinColumn(name = "maridaje_id")
     )
     private List<Maridaje> maridajes;
     

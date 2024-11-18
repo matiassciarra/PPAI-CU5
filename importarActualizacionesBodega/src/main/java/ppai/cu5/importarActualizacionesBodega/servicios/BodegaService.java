@@ -13,12 +13,18 @@ public class BodegaService {
     @Autowired
     BodegaRepository repositorio;
 
+    @Autowired
+    VinoService vinoService;
+
     public List<Bodega> obtenerTodasLasBodegas() {
         return (List<Bodega>) repositorio.findAll();
     }
 
     public void guardarBodegas(List<Bodega> bodegas) {
-        repositorio.saveAll(bodegas);
+        for (Bodega bodega : bodegas) {
+            bodega.getVinos().forEach(vino -> vinoService.guardarVino(vino));
+            repositorio.save(bodega);
+        }
     }
 
 }

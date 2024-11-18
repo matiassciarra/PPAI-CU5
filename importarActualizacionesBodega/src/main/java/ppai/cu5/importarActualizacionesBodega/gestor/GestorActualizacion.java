@@ -95,7 +95,7 @@ public class GestorActualizacion implements ISujeto {
             String nombre = camposVinoTraido[1];
             String notaCata = camposVinoTraido[3];
             double precio = Double.parseDouble(camposVinoTraido[4]);
-                Long idBodegaVinoTraido = Long.parseLong(camposVinoTraido[2]);
+            Long idBodegaVinoTraido = Long.parseLong(camposVinoTraido[2]);
             String infoVarietales = camposVinoTraido[5];
             //Ahora recorro las bodegas seleccionadas para actualizarle los vinos o agreguen nuevos.
             for (Bodega bodegaSeleccionada : bodegasSeleccionadas) {
@@ -107,7 +107,7 @@ public class GestorActualizacion implements ISujeto {
                     List<Maridaje> maridajes = buscarMaridajes(camposVinoTraido[6]);
                     List<TipoUva> tiposUva = buscarTiposUva(camposVinoTraido[5]);
                     Vino vinoCreado = new Vino(añada, nombre, notaCata, precio, fechaActual, tiposUva, infoVarietales, maridajes,bodegaSeleccionada);
-                    bodegaSeleccionada.getVinos().add(vinoCreado);
+                    bodegaSeleccionada.agregarVinoSiNoExiste(vinoCreado);
                     listaVinos.add(new DTOVino(vinoCreado,true));
                 }
             }
@@ -157,7 +157,6 @@ public class GestorActualizacion implements ISujeto {
     public void setPantalla(PantallaNovedades pantalla) {
         this.pantalla = pantalla;
     }
-
 
 
     private void notificarUsuarioSeguidores (List<DTOVino> novedadesVino){

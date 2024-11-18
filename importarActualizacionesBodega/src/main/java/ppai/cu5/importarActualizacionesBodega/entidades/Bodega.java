@@ -66,7 +66,7 @@ public class Bodega {
     public boolean existeVino(int añada, String nombre, Long idBodegaVinoTraido) {
         
         for (Vino vinoBodega : vinos) {
-           if (vinoBodega.getAñada() == añada && vinoBodega.getNombre().equals(nombre) && id.equals(idBodegaVinoTraido))
+           if (Objects.equals(vinoBodega.getAñada(), añada) && vinoBodega.getNombre().equals(nombre) && Objects.equals(id, idBodegaVinoTraido))
             return true;
         }
         return false;
@@ -74,7 +74,7 @@ public class Bodega {
 
     public Vino actualizarVino(int añada, String nombre, double precioNuevo, String notaCataNueva) {
         for (Vino vinoBodega : vinos) {
-            if (vinoBodega.getAñada() == añada && Objects.equals(vinoBodega.getNombre(), nombre)) {
+            if (Objects.equals(vinoBodega.getAñada(),añada) && Objects.equals(vinoBodega.getNombre(), nombre)){
                 vinoBodega.setPrecioARS(precioNuevo);
                 vinoBodega.setNotaDeCataBodega(notaCataNueva);
                 vinoBodega.setFechaActualizacion(LocalDate.now());
@@ -84,8 +84,14 @@ public class Bodega {
         return null;
     }
 
-    public void agregarVino(Vino vino) {
-        vinos.add(vino);
+    public void agregarVinoSiNoExiste(Vino vino) {
+        boolean existe = vinos.stream()
+                .anyMatch(v -> Objects.equals(v.getAñada(), vino.getAñada()) &&
+                        v.getNombre().equals(vino.getNombre()) &&
+                        Objects.equals(v.getBodega().getId(), vino.getBodega().getId()));
+        if (!existe) {
+            vinos.add(vino);
+        }
     }
 
     public void mostrarVinos() {

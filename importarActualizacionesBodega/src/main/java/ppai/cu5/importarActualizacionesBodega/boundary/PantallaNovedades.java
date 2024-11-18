@@ -1,17 +1,10 @@
 package ppai.cu5.importarActualizacionesBodega.boundary;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOBodega;
 import ppai.cu5.importarActualizacionesBodega.DTO.DTOVino;
-import ppai.cu5.importarActualizacionesBodega.entidades.Bodega;
 import ppai.cu5.importarActualizacionesBodega.gestor.GestorActualizacion;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @RestController
 @RequestMapping("/actualizacion")

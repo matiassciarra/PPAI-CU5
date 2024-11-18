@@ -32,4 +32,17 @@ public class DTOVino {
         this.varietales = vino.getVarietales().stream().map(DTOVarietal::new).toList();
         this.creado = accion;
     }
+
+    @Override
+    public String toString() {
+        return "🍷 DTOVino {" +
+                "\n   🏛️ Bodega: '" + nombreBodega + '\'' +
+                "\n   🍇 Nombre del Vino: '" + nombre + '\'' +
+                "\n   📅 Añada: " + añada +
+                "\n   📝 Nota de Cata: '" + notaDeCataBodega + '\'' +
+                "\n   🍷 Varietales: " + (varietales != null && !varietales.isEmpty() ? varietales : "No especificados") +
+                "\n   💰 Precio: $" + String.format("%.2f", precio) +
+                "\n}";
+    }
+
 }

@@ -10,6 +10,10 @@ public class InterfazNotificacionPush implements IObservadorNovedad {
 
     @Override
     public void enviarNotificacion(List<DTOVino> novedadesVino, List<String> suscriptores) {
+        notificarSuscriptores(novedadesVino,suscriptores);
+    }
+
+    private void notificarSuscriptores(List<DTOVino> novedadesVino, List<String> suscriptores) {
         for (String suscriptor : suscriptores) {
             StringBuilder mensaje = new StringBuilder()
                     .append("Hola ")

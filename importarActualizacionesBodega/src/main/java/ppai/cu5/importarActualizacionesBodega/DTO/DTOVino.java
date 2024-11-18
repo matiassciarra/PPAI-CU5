@@ -7,6 +7,7 @@ import ppai.cu5.importarActualizacionesBodega.entidades.Vino;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -35,14 +36,20 @@ public class DTOVino {
 
     @Override
     public String toString() {
-        return "🍷 DTOVino {" +
+        String varietalStr = varietales != null && !varietales.isEmpty()
+                ? varietales.stream()
+                .map(varietal -> "  - Nombre de la uva: " + varietal.getNombreUva() + ", Porcentaje de composición: " + varietal.getPorcentajeComposicion() + "%")
+                .collect(Collectors.joining("\n "))
+                : "No especificados";
+
+        return "🍷 Vino " + nombre +
                 "\n   🏛️ Bodega: '" + nombreBodega + '\'' +
-                "\n   🍇 Nombre del Vino: '" + nombre + '\'' +
                 "\n   📅 Añada: " + añada +
                 "\n   📝 Nota de Cata: '" + notaDeCataBodega + '\'' +
-                "\n   🍷 Varietales: " + (varietales != null && !varietales.isEmpty() ? varietales : "No especificados") +
+                "\n   🍇 Varietales: \n" + varietalStr +
                 "\n   💰 Precio: $" + String.format("%.2f", precio) +
-                "\n}";
+                "\n";
     }
+
 
 }

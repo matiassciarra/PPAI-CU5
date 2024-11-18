@@ -171,7 +171,6 @@ public class GestorActualizacion implements ISujeto {
 
     private List<String> buscarSeguidoresBodega (){
         List<String> usuariosSeguidores = new ArrayList<>();
-        System.out.println("motrar bodegas seleccionada" + bodegasSeleccionadas);
         for (var e : this.enofilos) {
             if (e.seguisABodega(bodegasSeleccionadas)) {
                 usuariosSeguidores.add(e.getUsuario().getNombre());

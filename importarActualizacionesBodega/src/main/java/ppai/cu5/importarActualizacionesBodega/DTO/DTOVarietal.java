@@ -16,4 +16,13 @@ public class DTOVarietal {
         nombreUva = varietal.getTipoUva().getNombre();
         porcentajeComposicion = varietal.getPorcentajeComposicion();
     }
+
+    @Override
+    public String toString() {
+        return "Composición de Vino" +
+                "Nombre de la uva: '" + nombreUva + '\'' +
+                ", Porcentaje de composición: " + porcentajeComposicion + '%' +
+                '\n';
+    }
+
 }

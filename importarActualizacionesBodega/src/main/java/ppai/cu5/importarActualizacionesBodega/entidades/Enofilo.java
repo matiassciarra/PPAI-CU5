@@ -27,8 +27,7 @@ public class Enofilo {
 
 
     public Boolean seguisABodega(List<Bodega> bodegas) {
-        System.out.println(siguiendo.stream()
-                .anyMatch(s -> s.sosDeBodega(bodegas)));
+        
         return siguiendo.stream()
                 .anyMatch(s -> s.sosDeBodega(bodegas));
     }

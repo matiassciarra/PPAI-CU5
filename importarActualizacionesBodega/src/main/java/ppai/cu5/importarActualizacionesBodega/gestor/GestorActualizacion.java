@@ -10,13 +10,12 @@ import ppai.cu5.importarActualizacionesBodega.Observer.IObservadorNovedad;
 import ppai.cu5.importarActualizacionesBodega.Observer.ISujeto;
 import ppai.cu5.importarActualizacionesBodega.boundary.ConfigAPI;
 import ppai.cu5.importarActualizacionesBodega.boundary.InterfazNotificacionPush;
+import ppai.cu5.importarActualizacionesBodega.boundary.PantallaNovedades;
 import ppai.cu5.importarActualizacionesBodega.entidades.*;
-
 import ppai.cu5.importarActualizacionesBodega.servicios.BodegaService;
 import ppai.cu5.importarActualizacionesBodega.servicios.EnofiloService;
 import ppai.cu5.importarActualizacionesBodega.servicios.MaridajeService;
 import ppai.cu5.importarActualizacionesBodega.servicios.TipoUvaService;
-import ppai.cu5.importarActualizacionesBodega.boundary.PantallaNovedades;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class GestorActualizacion implements ISujeto {
     private List<IObservadorNovedad> observadores;
 
     @PostConstruct
-    private void inicializardatos(){
+    private void inicializardatos() {
         bodegas = servicioBodega.obtenerTodasLasBodegas();
         tiposUvas = tipoUvaService.obtenerTiposUva();
         maridajes = servicioMaridaje.obtenerTodosLosMaridajes();
@@ -64,12 +63,12 @@ public class GestorActualizacion implements ISujeto {
     private List<DTOBodega> buscarBodegasActualizables() {
         bodegasActualizables = bodegas.stream().filter(Bodega::sosActualizable).toList();
         return bodegasActualizables.stream()
-                                    .map(DTOBodega::new)
-                                    .toList();
+                .map(DTOBodega::new)
+                .toList();
 
     }
 
-    public List<DTOVino>  tomarSeleccionBodega(List<Long> idsSeleccionadosBodega) {
+    public List<DTOVino> tomarSeleccionBodega(List<Long> idsSeleccionadosBodega) {
         //Se obtienen las bodegas seleccionadas para actualizar
         bodegasSeleccionadas = bodegas.stream().filter(bodega -> idsSeleccionadosBodega.contains(bodega.getId())).toList();
         return obtenerActualizaciones(idsSeleccionadosBodega);
@@ -85,7 +84,7 @@ public class GestorActualizacion implements ISujeto {
         return actualizarVinosBodega(actualizacionesVinos);
     }
 
-    private List<DTOVino>  actualizarVinosBodega(List<String> actualizacionesVinos) {
+    private List<DTOVino> actualizarVinosBodega(List<String> actualizacionesVinos) {
         obtenerFechaActual();
         List<DTOVino> listaVinos = new ArrayList();
         for (String vinoTraido : actualizacionesVinos) {
@@ -105,14 +104,13 @@ public class GestorActualizacion implements ISujeto {
                 }
                 if (bodegaSeleccionada.existeVino(añada, nombre)) {
                     Vino vinoActualizado = bodegaSeleccionada.actualizarVino(añada, nombre, precio, notaCata);
-                    listaVinos.add(new DTOVino(vinoActualizado,false));
-                }
-                else {
+                    listaVinos.add(new DTOVino(vinoActualizado, false));
+                } else {
                     List<Maridaje> maridajes = buscarMaridajes(camposVinoTraido[6]);
                     List<TipoUva> tiposUva = buscarTiposUva(camposVinoTraido[5]);
-                    Vino vinoCreado = new Vino(añada, nombre, notaCata, precio, fechaActual, tiposUva, infoVarietales, maridajes,bodegaSeleccionada);
+                    Vino vinoCreado = new Vino(añada, nombre, notaCata, precio, fechaActual, tiposUva, infoVarietales, maridajes, bodegaSeleccionada);
                     bodegaSeleccionada.getVinos().add(vinoCreado);
-                    listaVinos.add(new DTOVino(vinoCreado,true));
+                    listaVinos.add(new DTOVino(vinoCreado, true));
                 }
             }
         }
@@ -121,6 +119,7 @@ public class GestorActualizacion implements ISujeto {
         notificarUsuarioSeguidores(listaVinos);
         return listaVinos;
     }
+
     private List<Maridaje> buscarMaridajes(String maridajesString) {
         List<Maridaje> maridajesEncontrados = new ArrayList<>();
 
@@ -136,6 +135,7 @@ public class GestorActualizacion implements ISujeto {
         }
         return maridajesEncontrados;
     }
+
     private List<TipoUva> buscarTiposUva(String infoVarietales) {
         List<TipoUva> tiposUvasEncontradas = new ArrayList<>();
         String[] varietalesString = infoVarietales.split("\\|");
@@ -158,33 +158,27 @@ public class GestorActualizacion implements ISujeto {
         fechaActual = LocalDate.now();
     }
 
-    private void notificarUsuarioSeguidores (List<DTOVino> novedadesVino){
+    private void notificarUsuarioSeguidores(List<DTOVino> novedadesVino) {
         List<String> usuariosSeguidores = buscarSeguidoresBodega();
         IObservadorNovedad observadorNovedad = new InterfazNotificacionPush();
         suscribir(observadorNovedad);
         notificar(novedadesVino, usuariosSeguidores);
     }
 
-    private List<String> buscarSeguidoresBodega (){
+    private List<String> buscarSeguidoresBodega() {
         List<String> usuariosSeguidores = new ArrayList<>();
-<<<<<<< HEAD
         for (Enofilo enofilo : this.enofilos) {
             if (enofilo.seguisABodega(bodegasSeleccionadas)) {
                 usuariosSeguidores.add(enofilo.getUsuario().getNombre());
-=======
-        for (var e : this.enofilos) {
-            if (e.seguisABodega(bodegasSeleccionadas)) {
-                usuariosSeguidores.add(e.getUsuario().getNombre());
->>>>>>> 981300bc051a54d7fa884d19a43d0e73d303b0c9
             }
         }
         return usuariosSeguidores;
     }
 
     @Override
-    public void notificar(List<DTOVino> novedadesVino,List<String> usuariosSeguidores) {
+    public void notificar(List<DTOVino> novedadesVino, List<String> usuariosSeguidores) {
         observadores.forEach(observadorNovedad -> {
-            observadorNovedad.enviarNotificacion(novedadesVino,usuariosSeguidores);
+            observadorNovedad.enviarNotificacion(novedadesVino, usuariosSeguidores);
         });
     }
 

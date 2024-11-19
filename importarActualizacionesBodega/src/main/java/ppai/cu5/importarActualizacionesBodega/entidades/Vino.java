@@ -64,7 +64,6 @@ public class Vino {
                 String descripcion = camposVarietal[1];
                 int porcentajeComposicion = Integer.parseInt(camposVarietal[2]);
                 Varietal varietal = new Varietal(descripcion, porcentajeComposicion, tipoUva);
-                //Este cambio de mierda teniamos que hacer para que solucione la base de datos diossss
                 varietal.setVino(this); // Establece la relación bidireccional
                 varietalesCreados.add(varietal);
             }
